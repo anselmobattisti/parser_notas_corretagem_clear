@@ -1,0 +1,5 @@
+camelot-py
+opencv-python
+pandas
+pikepdf
+beautifultable==1.0.1

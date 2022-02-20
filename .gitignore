@@ -1,0 +1,9 @@
+*.pdf
+venv/*
+venv
+./venv/*
+./venv/*
+-venv
+df_results.xlsx
+.~lock.df_results.xlsx#
+./minhas_notas
