@@ -29,7 +29,7 @@ class ParserClearTest(unittest.TestCase):
         """
         tables = self.parser_clear.extract(self.parser_clear.refactor_path_pdf)
         data_pregao = self.parser_clear.parse_data_pregao(tables[0].df)        
-        self.assertEqual(data_pregao, "11/02/2022")
+        self.assertEqual(data_pregao, date(2022, 2, 11))
 
     @unittest.skip
     def test_taxa_liquidacao(self):
@@ -72,11 +72,11 @@ class ParserClearTest(unittest.TestCase):
         """
         Cria uma nota a partir do PDF
         """
-        nota = self.parser_clear.cria_nota()
-        print(nota)
-        # self.assertEqual(len(transacoes), 5)
+        nota = self.parser_clear.cria_nota()   
 
-
+        self.assertEqual(nota.taxa_liquidacao, 1.09)
+        self.assertEqual(len(nota.transacoes), 5)
 
 if __name__ == '__main__':
     unittest.main()
+

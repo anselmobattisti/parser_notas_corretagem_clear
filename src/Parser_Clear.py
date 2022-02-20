@@ -1,3 +1,4 @@
+from datetime import date
 import camelot
 import os
 from os import listdir
@@ -31,8 +32,10 @@ class ParserClear(ParserNota):
 
         Args:
             table (PandasDataframe): Dataframe com os dados da nota
-        """        
-        return table[2][2]
+        """     
+        data_pregao = table[2][2]    
+        data_pregao_formatada = date(int(data_pregao[6:10]), int(data_pregao[3:5]), int(data_pregao[0:2]))
+        return data_pregao_formatada
 
     def parse_taxa_liquidacao(self, table):
         """
@@ -68,13 +71,26 @@ class ParserClear(ParserNota):
         table = table.iloc[4: , :]
         transacoes = []
         for aux in table.iterrows():
-            # Extrair o ativo, a string vem da seguinte forma 
-            # "    FII MAXI REN          MXRF11          CI"
-            nome_ativo = aux[1][3].split("          ")
-            tipo = aux[1][1]
-            ativo = nome_ativo[1]
-            qtd = int(aux[1][6])
-            preco_medio = float(aux[1][7].replace(",","."))
+            
+            if len(aux[1]) == 10:
+                # Extrair o ativo, a string vem da seguinte forma 
+                # "    FII MAXI REN          MXRF11          CI"
+                nome_ativo = aux[1][3].split("          ")
+                tipo = aux[1][1][:1]
+                ativo = nome_ativo[1]
+                qtd = int(aux[1][6])
+                preco_medio = float(aux[1][7].replace(",","."))
+
+            
+            if len(aux[1])== 8:
+                # Extrair o ativo, a string vem da seguinte forma 
+                # "    FII MAXI REN          MXRF11          CI"
+                nome_ativo = aux[1][3].split("          ")
+                tipo = aux[1][1][:1]
+                ativo = nome_ativo[1]
+                qtd = int(aux[1][4])
+                preco_medio = float(aux[1][5].replace(",","."))
+
             nova_trasacao = Transacao(tipo, ativo, qtd, preco_medio)
             transacoes.append(nova_trasacao)
 
@@ -84,15 +100,19 @@ class ParserClear(ParserNota):
         """
         Cria uma nota a partir do arquivo enviado
         """
+        tables = self.extract(self.refactor_path_pdf)
+        print(tables[0].df)
+        print(tables[1].df)
+        quit()
 
-        data_pregao = self.parse_data_pregao()
-        taxa_liquidacao = self.parse_taxa_liquidacao()
-        emolumentos = self.parse_emolumentos()
-        valor_total_operacoes = self.parse_valor_total_operacoes()
+        data_pregao = self.parse_data_pregao(tables[0].df)
+        taxa_liquidacao = self.parse_taxa_liquidacao(tables[2].df)
+        emolumentos = self.parse_emolumentos(tables[2].df)
+        valor_total_operacoes = self.parse_valor_total_operacoes(tables[2].df)
 
         nota = Nota(data_pregao, taxa_liquidacao, emolumentos, valor_total_operacoes)
 
-        transacoes = self.parse_transacoes()
+        transacoes = self.parse_transacoes(tables[1].df)
 
         for transacao in transacoes:            
             nota.add_transcao(transacao)

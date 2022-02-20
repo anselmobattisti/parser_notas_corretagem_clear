@@ -15,16 +15,23 @@ def main():
 
     # Define qual é o diretório onde estão os arquivos
     path_notas = "/home/battisti/versionado/nota-corretagem-clear/minhas_notas/"
+    # path_notas = "/home/battisti/versionado/nota-corretagem-clear/notas/"
 
     notas = []
     for f in os.listdir(path_notas):
         print(f)
         file_path = "{}/{}".format(path_notas,f)
         if os.path.isfile(file_path) and file_path.endswith('.pdf'):
-            print(file_path)
-        
+            print(file_path)        
             parser = ParserClear(file_path)
-            nota = parser.criar_nota()
+            nota = parser.cria_nota()
+            notas.append(nota)
         
+    total = 0
+    for nota in notas:
+        total += nota.valor_total_operacoes
+
+    print(total)
+
 if __name__ == "__main__":
     main()
