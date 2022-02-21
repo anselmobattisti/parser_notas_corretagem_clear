@@ -45,4 +45,5 @@ python3 -m unittest tests/test_Nota.py
 
 # Todo
 
-* [ ] - Exportar as transações e as notas em Excel
+- [ ] Exportar as transações e as notas em Excel
+- [ ] Exportar as notas em CSV
