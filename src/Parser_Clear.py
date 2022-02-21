@@ -42,10 +42,10 @@ class ParserClear(ParserNota):
         
         if tables.n == 2:
 
-            # topo
+            # Tabela com os dados da nota e com o resumo
             dados_nota = camelot.read_pdf(refactor_path_pdf, flavor='stream')            
             
-            # transacoes
+            # Tabela com as Transações
             transacaoes = camelot.read_pdf(refactor_path_pdf , flavor='stream', table_areas = ['0,600,600,400'],
                                 columns=['91,105,167,180,305,345,402,445,543'])
 
@@ -105,8 +105,6 @@ class ParserClear(ParserNota):
         transacoes = []        
         
         for aux in table.iterrows():
-            
-            # aux[1].dropna(inplace=True)
             aux[1].replace('', np.nan, inplace=True)
             
             # Tipo, compra ou venda (C / V)
@@ -134,64 +132,9 @@ class ParserClear(ParserNota):
                 else:
                     qtd = int(aux[1][6])
                     preco_medio = float(aux[1][7].replace(",","."))                
-            
-                        
 
             nova_trasacao = Transacao(tipo, ativo, qtd, preco_medio)
             transacoes.append(nova_trasacao)
-
-            # if len(aux[1]) == 9:
-            #     qtd = int(aux[1][6])
-            #     preco_medio = float(aux[1][7].replace(",","."))
-
-
-            # if len(aux[1]) == 8:
-                
-                
-            #     preco_medio = float(aux[1][5].replace(",","."))
-
-            #     if aux[1][5] == "" or aux[1][5][:1] == "#" :
-            #         qtd = int(aux[1][6])
-            #         preco_medio = float(aux[1][7].replace(",","."))
-            #     else:
-            #         qtd = int(aux[1][5])
-            #         preco_medio = float(aux[1][6].replace(",","."))                   
-
-            # if len(aux[1])== 9:
-            #     tipo = aux[1][1][:1]
-            #     ativo = aux[1][3]
-
-            #     if aux[1][5] == "" or aux[1][5][:1] == "#" :
-            #         qtd = int(aux[1][6])
-            #         preco_medio = float(aux[1][7].replace(",","."))
-            #     else:
-            #         qtd = int(aux[1][5])
-            #         preco_medio = float(aux[1][6].replace(",","."))                                    
-                
-            #     preco_medio = float(aux[1][5].replace(",","."))
-
-            # if len(aux[1]) == 10:
-                
-            #     tipo = aux[1][1][:1]
-
-            #     if aux[1][3] == "":
-            #         ativo = aux[1][4]
-            #     else:
-            #         ativo = aux[1][3]
-
-            #     if aux[1][5] == "" or aux[1][5][:1] == "#" :
-            #         qtd = int(aux[1][6])
-            #         preco_medio = float(aux[1][7].replace(",","."))
-            #     else:
-            #         qtd = int(aux[1][5])
-            #         preco_medio = float(aux[1][6].replace(",","."))            
-
-            # if len(aux[1])== 11:
-            #     tipo = aux[1][1][:1]
-            #     ativo = aux[1][4]
-            #     qtd = int(aux[1][6])
-            #     preco_medio = float(aux[1][7].replace(",","."))
-            
 
         return transacoes
     

@@ -43,10 +43,10 @@ class Nota:
         """
         Caminho do PDF que gerou a nota
         """
-        return self._data_pregao
+        return self._path_pdf
     
     @path_pdf.setter
-    def path_pdf(self, valor:date):
+    def path_pdf(self, valor:str):
         """
         Seta o caminho do arquvio que gerou a nota
         """
