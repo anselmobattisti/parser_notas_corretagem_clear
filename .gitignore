@@ -7,3 +7,5 @@ venv
 df_results.xlsx
 .~lock.df_results.xlsx#
 ./minhas_notas
+.vscode
+__pycache__

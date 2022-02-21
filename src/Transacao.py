@@ -1,4 +1,4 @@
-from beautifultable import BeautifulTable
+import re
 
 class Transacao:
 
@@ -47,6 +47,7 @@ class Transacao:
         """
         Seta o nome do ativo
         """
+        valor = " ".join(re.split("\s+", valor, flags=re.UNICODE)).strip()
         self._ativo = valor
 
     @property
@@ -111,26 +112,3 @@ class Transacao:
         Calcula o valor total da operação ajustada com as taxas pagas
         """
         return self.qtd * self.preco_medio_ajustado
-
-    def show(self):
-        print("Transação")
-        table = BeautifulTable()
-        table.rows.append([self.tipo])
-        table.rows.append([self.ativo])
-        table.rows.append([self.qtd])
-        table.rows.append([self.preco_medio])
-        table.rows.append([self.preco_medio_ajustado])
-        table.rows.append([self.calc_valor_transacao()])
-        table.rows.append([self.calc_valor_transacao_ajustada()])
-        table.rows.header = [
-            "Tipo",
-            "Ativo",
-            "Qtd",
-            "Preco_Medio",
-            "Preco_Medio_Ajustado",
-            "Valor_Transacao",
-            "Valor_Transacao_Ajustada",
-        ]
-        print(table)
-        print("\n")        
-        

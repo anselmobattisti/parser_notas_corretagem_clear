@@ -3,7 +3,7 @@ from src.Transacao import Transacao
 
 class Nota:
 
-    def __init__(self, data_pregao:date, taxa_liquidacao:float, emolumentos:float, valor_total_operacoes:float):
+    def __init__(self, data_pregao:date, taxa_liquidacao:float, emolumentos:float, valor_total_operacoes:float, path_pdf:str):
         """
         Estrutura da nota de corretagem
 
@@ -12,11 +12,13 @@ class Nota:
             taxa_liquidacao (float): Taxa de liquidação
             emolumentos (float): Taxa de emolumentos
             valor_total_operacoes (float): Valor total da soma de todas as transações da nota
+            path_pdf (str): Arquivo PDF que gerou a nota
         """
         self.data_pregao = data_pregao
         self.taxa_liquidacao = taxa_liquidacao
         self.emolumentos = emolumentos
         self.valor_total_operacoes = valor_total_operacoes
+        self.path_pdf = path_pdf
         self.transacoes = []
 
     @property
@@ -35,6 +37,20 @@ class Nota:
             raise TypeError("A data do pregão deve ser um date")
         
         self._data_pregao = valor
+
+    @property
+    def path_pdf(self):
+        """
+        Caminho do PDF que gerou a nota
+        """
+        return self._data_pregao
+    
+    @path_pdf.setter
+    def path_pdf(self, valor:date):
+        """
+        Seta o caminho do arquvio que gerou a nota
+        """
+        self._path_pdf = valor
 
     @property
     def taxa_liquidacao(self):

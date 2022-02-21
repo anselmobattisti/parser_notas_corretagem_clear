@@ -42,3 +42,7 @@ source venv/bin/activate
 
 python3 -m unittest tests/test_Nota.py 
 ```
+
+# Todo
+
+* [ ] - Exportar as transações e as notas em Excel
