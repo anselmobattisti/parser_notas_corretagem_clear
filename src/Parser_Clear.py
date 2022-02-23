@@ -31,32 +31,22 @@ class ParserClear(ParserNota):
         
     def extract(self, refactor_path_pdf):
 
-        tables = camelot.read_pdf(refactor_path_pdf, flavor='stream')
-        
         # não conseguiu achar as três tabelas
         dados = {
             "cabecalho": "",
             "transacoes": "",
             "resumo": "",
         }
-        
-        if tables.n == 2:
+        # Tabela com os dados da nota e com o resumo
+        dados_nota = camelot.read_pdf(refactor_path_pdf, flavor='stream')
 
-            # Tabela com os dados da nota e com o resumo
-            dados_nota = camelot.read_pdf(refactor_path_pdf, flavor='stream')            
-            
-            # Tabela com as Transações
-            transacaoes = camelot.read_pdf(refactor_path_pdf , flavor='stream', table_areas = ['0,600,600,400'],
-                                columns=['91,105,167,180,305,345,402,445,543'])
+        # Tabela com as Transações
+        transacaoes = camelot.read_pdf(refactor_path_pdf, flavor='stream', table_areas=['0,600,600,400'],
+                                       columns=['91,105,167,180,305,345,402,445,543'])
 
-            dados["cabecalho"] = dados_nota[0].df
-            dados["transacoes"] = transacaoes[0].df.iloc[1: , :]
-            dados["resumo"] = dados_nota[1].df
-            
-        else:
-            dados["cabecalho"] = tables[0].df
-            dados["transacoes"] = tables[1].df.iloc[4: , :]
-            dados["resumo"] = tables[2].df            
+        dados["cabecalho"] = dados_nota[0].df
+        dados["transacoes"] = transacaoes[0].df.iloc[1:, :]
+        dados["resumo"] = dados_nota[1].df
 
         return dados
 
