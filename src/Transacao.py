@@ -2,7 +2,7 @@ import re
 
 class Transacao:
 
-    def __init__(self, tipo:str, ativo:str, qtd:int, preco_medio:float):
+    def __init__(self, tipo:str, ativo:str, qtd:int, preco_medio:float, preco_medio_ajustado:float=0):
         """
         Estrutura da nota de corretagem
 
@@ -11,12 +11,18 @@ class Transacao:
             ativo (str): Nome do ativo
             qtd (int): Quantidade de unidades transacionadas
             preco_medio (float): Preço médio de cada unidade
+            preco_medio_ajustado (float): Preço médio ajustado descontando as taxas
         """                
         self.tipo = tipo
         self.ativo = ativo
         self.qtd = qtd
         self.preco_medio = preco_medio
-        self.preco_medio_ajustado = preco_medio
+
+        if preco_medio_ajustado > 0:
+            self.preco_medio_ajustado = preco_medio_ajustado
+        else:
+            self.preco_medio_ajustado = preco_medio
+
 
     @property
     def tipo(self):

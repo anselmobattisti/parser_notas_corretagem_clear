@@ -4,6 +4,7 @@ from src.Nota import Nota
 from src.Parser_Clear import ParserClear
 import os
 from src.Imprimir import Imprimir
+from src.Dados_CSV import DadosCSV
 """
 Exemplo de uso
 
@@ -19,7 +20,7 @@ def main():
 
     # Define qual é o diretório onde estão os arquivos
     path_notas = "/home/battisti/versionado/nota-corretagem-clear/minhas_notas/ENBR3"
-    # path_notas = "/home/battisti/versionado/nota-corretagem-clear/notas/"
+    # path_notas = "/home/battisti/versionado/nota-corretagem-clear/minhas_notas/"
 
     notas = []
     for f in os.listdir(path_notas):        
@@ -34,17 +35,20 @@ def main():
                 notas.append(nota)
 
     total = 0    
-    Imprimir.ativo(meus_ativos["ENERGIAS BR ON NM"])
-    
+
+    transacoes = []
     for nota in notas:
-        meus_ativos["ENERGIAS BR ON NM"].recalcular_preco_medio(nota.transacoes)          
+        transacoes += nota.transacoes
+        meus_ativos["ENERGIAS BR ON NM"].recalcular_preco_medio(nota.transacoes)
         # print("Nota ========== ")
         # Imprimir.nota(nota)
         # total += nota.valor_total_operacoes
-    
-    Imprimir.ativo(meus_ativos["ENERGIAS BR ON NM"])
 
-    print(total)
+    Imprimir.ativo(meus_ativos["ENERGIAS BR ON NM"])
+    DadosCSV.exportar_notas(notas, "./minhas_notas/notas.csv")
+    DadosCSV.exportar_transacoes(transacoes, "./minhas_notas/transacoes.csv")
+
+    # print(total)
 
 if __name__ == "__main__":
     main()

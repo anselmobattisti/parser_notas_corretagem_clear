@@ -4,3 +4,4 @@ venv
 ./venv/*
 ./venv/*
 minhas_notas
+*.csv

@@ -4,11 +4,14 @@ from src.Ativo import Ativo
 import datetime
 from typing import List
 import csv
+from src.Imprimir import Imprimir
+from datetime import date
 
-class Exportar:
+class DadosCSV:
+
 
     @staticmethod
-    def notas(notas: List[Nota], filename:str):
+    def exportar_notas(notas: List[Nota], filename:str):
         """
         Exporta as notas para um arquivo CSV
 
@@ -41,7 +44,7 @@ class Exportar:
             print('Error:', e)
 
     @staticmethod
-    def transacoes(transacoes: List[Transacao], filename:str):
+    def exportar_transacoes(transacoes: List[Transacao], filename:str):
         """
         Exporta as transacoes para um arquivo CSV
 
@@ -76,4 +79,55 @@ class Exportar:
 
         except Exception as e:
             print('Error:', e)
+
+    @staticmethod
+    def importar_transacoes(filename:str):
+        """
+        Importar as transacoes que estão em um arquivo CSV.
+
+        O processo de extração das informações do PDF é demorada então a ideia é executar a extração, salvar em um
+        CSV e depois usar os dados do CSV para gerar os relatórios para o imposto de renda.
+
+        Args:
+            filename (str): Path do arquivo que será lido
+        """
+        try:
+            transacaoes = []
+            with open(filename, 'r', newline='') as f:
+                spamreader = csv.reader(f, delimiter=",")
+                next(spamreader)
+                for row in spamreader:
+                    t = Transacao(row[0], row[1], int(row[2]), float(row[3]), float(row[4]))
+                    transacaoes.append(t)
+
+            return transacaoes
+
+        except Exception as e:
+            print('Error:', e)
+            return []
+
+    @staticmethod
+    def importar_notas(filename:str):
+        """
+        Importar as notas que estão em um arquivo CSV.
+
+        Args:
+            filename (str): Path do arquivo que será lido
+        """
+        try:
+            notas = []
+            with open(filename, 'r', newline='') as f:
+                spamreader = csv.reader(f, delimiter=",")
+                next(spamreader)
+                for row in spamreader:
+                    # Data,Emolumentos,Taxa_Liquidacao,Valor_Total_Operacao,Arquivo
+                    dt = row[0].split("-")
+                    n = Nota(date(int(dt[0]), int(dt[1]), int(dt[2])), float(row[1]), float(row[2]), float(row[3]), row[4])
+                    notas.append(n)
+
+            return notas
+
+        except Exception as e:
+            print('Error:', e)
+            return []
 
