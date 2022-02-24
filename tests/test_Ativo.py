@@ -1,5 +1,4 @@
 import unittest
-from src.Imprimir import Imprimir
 from src.Ativo import Ativo
 from src.Transacao import Transacao
 

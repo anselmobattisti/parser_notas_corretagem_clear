@@ -5,3 +5,5 @@ pikepdf
 beautifultable==1.0.1
 matplotlib
 ghostscript
+PyPDF2
+pdfminer

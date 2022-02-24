@@ -5,6 +5,7 @@ from src.Parser_Clear import ParserClear
 import os
 from src.Imprimir import Imprimir
 from src.Dados_CSV import DadosCSV
+
 """
 Exemplo de uso
 
@@ -42,9 +43,10 @@ def processar_notas(path_notas):
 
 def main():
 
+    meses = ["teste"]
     # meses = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
     # falta o mes 6
-    meses = ["07", "08", "09", "10", "11", "12"]
+    # meses = ["06", "07", "08", "09", "10", "11", "12"]
 
     for mes in meses:
         print("Processando as notas do mês {}:".format(mes))

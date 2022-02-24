@@ -1,4 +1,5 @@
 from datetime import date
+
 import camelot
 from camelot import utils
 import os
@@ -25,7 +26,7 @@ class ParserClear(ParserNota):
         """
         self.path_pdf = path_pdf
         self.refactor_path_pdf = self.refactor_pdf(self.path_pdf)
-        self.tables = self.extract(self.refactor_path_pdf)
+
         # # Remover o arquivo temporário
         # os.remove(self.refactor_path_pdf)
         
@@ -44,9 +45,22 @@ class ParserClear(ParserNota):
         transacaoes = camelot.read_pdf(refactor_path_pdf, flavor='stream', table_areas=['0,600,600,400'],
                                        columns=['91,105,167,180,305,345,402,445,543'])
 
-        dados["cabecalho"] = dados_nota[0].df
-        dados["transacoes"] = transacaoes[0].df.iloc[1:, :]
-        dados["resumo"] = dados_nota[1].df
+        tables = camelot.read_pdf(refactor_path_pdf, table_regions=['0,600,600,400'], columns=['300, 500'])
+
+        print(tables[0].df)
+        exit()
+
+        if dados_nota.n == 2:
+            dados["cabecalho"] = dados_nota[0].df
+            dados["transacoes"] = transacaoes[0].df.iloc[1:, :]
+            dados["resumo"] = dados_nota[1].df
+        else:
+            print(dados_nota[0].df)
+            print(dados_nota[1].df)
+            print(dados_nota[2].df)
+            dados["cabecalho"] = dados_nota[0].df
+            dados["transacoes"] = transacaoes[0].df.iloc[1:, :]
+            dados["resumo"] = dados_nota[2].df
 
         return dados
 
