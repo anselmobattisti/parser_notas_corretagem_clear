@@ -25,10 +25,10 @@ class NotaTest(unittest.TestCase):
         filename = "transacoes.csv"
 
         transacoes = []
-        transacoes.append(Transacao("C", "ENERGIAS BR ON NM ", 300, 20.00))
-        transacoes.append(Transacao("V", "KNRI11",2, 135.25))
-        transacoes.append(Transacao("V", "KNRI11",2, 135.25))
-        transacoes.append(Transacao("C", "ENERGIAS BR ON NM ", 200, 20.00))
+        transacoes.append(Transacao(date(2021,10,10), "C", "ENERGIAS BR ON NM ", 300, 20.00))
+        transacoes.append(Transacao(date(2021,11,10), "V", "KNRI11",2, 135.25))
+        transacoes.append(Transacao(date(2021,12,2), "V", "KNRI11",2, 135.25))
+        transacoes.append(Transacao(date(2021,2,13), "C", "ENERGIAS BR ON NM ", 200, 20.00))
 
         DadosCSV.exportar_transacoes(transacoes, filename)
 
@@ -38,6 +38,7 @@ class NotaTest(unittest.TestCase):
     def test_importartransacoes(self):
         filename = "transacoes.csv"
         transacoes = DadosCSV.importar_transacoes(filename)
+        Imprimir.transacao(transacoes[0])
         self.assertTrue(len(transacoes), 4)
         # os.remove(filename)
 

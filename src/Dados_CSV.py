@@ -24,7 +24,7 @@ class DadosCSV:
             with open(filename, 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow([
-                        "Data",
+                        "Data_Pregao",
                         "Emolumentos",
                         "Taxa_Liquidacao",
                         "Valor_Total_Operacao",
@@ -57,6 +57,7 @@ class DadosCSV:
             with open(filename, 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow([
+                    "Data_Pregao",
                     "Tipo",
                     "Ativo",
                     "Qtd",
@@ -68,6 +69,7 @@ class DadosCSV:
 
                 for transacao in transacoes:
                     writer.writerow([
+                        transacao.data_pregao,
                         transacao.tipo,
                         transacao.ativo,
                         transacao.qtd,
@@ -97,7 +99,9 @@ class DadosCSV:
                 spamreader = csv.reader(f, delimiter=",")
                 next(spamreader)
                 for row in spamreader:
-                    t = Transacao(row[0], row[1], int(row[2]), float(row[3]), float(row[4]))
+                    dt = row[0].split("-")
+                    data_pregao = date(int(dt[0]), int(dt[1]), int(dt[2]))
+                    t = Transacao(data_pregao, row[1], row[2], int(row[3]), float(row[4]), float(row[5]))
                     transacaoes.append(t)
 
             return transacaoes

@@ -44,6 +44,7 @@ class Imprimir:
             transacao (Transacao): Transacao
         """
         table = BeautifulTable()
+        table.rows.append(["{}/{}/{}".format(transacao.data_pregao.day,transacao.data_pregao.month, transacao.data_pregao.year)])
         table.rows.append([transacao.tipo])
         table.rows.append([transacao.ativo])
         table.rows.append([transacao.qtd])
@@ -52,6 +53,7 @@ class Imprimir:
         table.rows.append([transacao.calc_valor_transacao()])
         table.rows.append([transacao.calc_valor_transacao_ajustada()])
         table.rows.header = [
+            "Data_Pregao",
             "Tipo",
             "Ativo",
             "Qtd",

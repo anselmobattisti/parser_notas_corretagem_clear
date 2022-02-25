@@ -10,7 +10,11 @@ class TransacaoTest(unittest.TestCase):
         cls.ativo = "KNRI11"
         cls.qtd = 10
         cls.preco_medio = 135.25
-        cls.transacao = Transacao(cls.tipo, cls.ativo, cls.qtd, cls.preco_medio)
+        cls.data_pregao = date(2022, 12, 25)
+        cls.transacao = Transacao(cls.data_pregao, cls.tipo, cls.ativo, cls.qtd, cls.preco_medio)
+
+    def test_data_pregao(self):
+        self.assertEqual(self.transacao.data_pregao, self.data_pregao)
 
     def test_tipo(self):
         """
@@ -44,7 +48,7 @@ class TransacaoTest(unittest.TestCase):
         self.assertEqual(self.transacao.calc_valor_transacao(), valor_transacao)    
 
     def test_preco_medio_ajustado_na_craicao(self):
-        t1 = Transacao("C", "KNRI11", 10, 20.0, 19.0)
+        t1 = Transacao(date(2022, 12, 25), "C", "KNRI11", 10, 20.0, 19.0)
         self.assertEqual(t1.preco_medio_ajustado, 19.0)
 
 if __name__ == '__main__':

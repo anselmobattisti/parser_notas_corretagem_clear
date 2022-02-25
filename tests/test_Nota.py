@@ -12,30 +12,26 @@ class NotaTest(unittest.TestCase):
         cls.emolumentos = 0.21
         cls.data_pregao = date(2022, 12, 25)
         cls.valor_total_operacoes = 4345.86
-        cls.nota = Nota(cls.data_pregao, cls.taxa_liquidacao, cls.emolumentos,cls.valor_total_operacoes)
-    
-    @unittest.skip
+        cls.path_pdf = "pdf.pdf"
+        cls.nota = Nota(cls.data_pregao, cls.taxa_liquidacao, cls.emolumentos,cls.valor_total_operacoes, cls.path_pdf)
+
     def test_data_pregao(self):
         self.assertEqual(self.nota.data_pregao, self.data_pregao)
 
-    @unittest.skip
     def test_taxa_liquidacao(self):
         self.assertEqual(self.nota.taxa_liquidacao, self.taxa_liquidacao)
-    
-    @unittest.skip
+
     def test_emolumentos(self):
         self.assertEqual(self.nota.emolumentos, self.emolumentos)
-    
-    @unittest.skip
+
     def test_valor_total_operacoes(self):
         self.assertEqual(self.nota.valor_total_operacoes, self.valor_total_operacoes)
-    
-    @unittest.skip
+
     def test_add_transacao(self):
         """
         Verifica se uma transacao está sendo adicionada a nota
         """
-        t1 = Transacao("C", "KNRI11",2, 135.25)        
+        t1 = Transacao(date(2022, 12, 25), "C", "KNRI11",2, 135.25)
         self.nota.add_transcao(t1)
         self.assertEqual(len(self.nota.transacoes), 1)
 
@@ -44,13 +40,13 @@ class NotaTest(unittest.TestCase):
         Verifica se a operação de ajuste do preço médio está correta
         """
 
-        n1 = Nota(date(2022, 2, 11), 1.09, 0.21, 4345.89)
+        n1 = Nota(date(2022, 2, 11), 1.09, 0.21, 4345.89, "pdf.pdf")
 
-        t1 = Transacao("C", "KNRI11",2, 135.25)
-        t2 = Transacao("C", "KNRI11",8, 135.25)
-        t3 = Transacao("V", "MALL11",21, 98.16)
-        t4 = Transacao("C", "MXRF11",50, 9.36)
-        t5 = Transacao("C", "MXRF11",50, 9.36)
+        t1 = Transacao(date(2022, 2, 11), "C", "KNRI11",2, 135.25)
+        t2 = Transacao(date(2022, 2, 11), "C", "KNRI11",8, 135.25)
+        t3 = Transacao(date(2022, 2, 11), "V", "MALL11",21, 98.16)
+        t4 = Transacao(date(2022, 2, 11), "C", "MXRF11",50, 9.36)
+        t5 = Transacao(date(2022, 2, 11), "C", "MXRF11",50, 9.36)
         
         n1.add_transcao(t1)
         n1.add_transcao(t2)

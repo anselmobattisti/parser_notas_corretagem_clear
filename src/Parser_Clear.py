@@ -45,22 +45,12 @@ class ParserClear(ParserNota):
         transacaoes = camelot.read_pdf(refactor_path_pdf, flavor='stream', table_areas=['0,600,600,400'],
                                        columns=['91,105,167,180,305,345,402,445,543'])
 
-        tables = camelot.read_pdf(refactor_path_pdf, table_regions=['0,600,600,400'], columns=['300, 500'])
+        # areas [x1,y1,y2,x2] = x1 = sempre 0, y1 = altura que vai começar a ler y2 = altura que vai parar de ler x1 =
+        resumo = camelot.read_pdf(refactor_path_pdf, flavor='stream', table_areas=['0,380,600,0'])
 
-        print(tables[0].df)
-        exit()
-
-        if dados_nota.n == 2:
-            dados["cabecalho"] = dados_nota[0].df
-            dados["transacoes"] = transacaoes[0].df.iloc[1:, :]
-            dados["resumo"] = dados_nota[1].df
-        else:
-            print(dados_nota[0].df)
-            print(dados_nota[1].df)
-            print(dados_nota[2].df)
-            dados["cabecalho"] = dados_nota[0].df
-            dados["transacoes"] = transacaoes[0].df.iloc[1:, :]
-            dados["resumo"] = dados_nota[2].df
+        dados["cabecalho"] = dados_nota[0].df
+        dados["transacoes"] = transacaoes[0].df.iloc[1:, :]
+        dados["resumo"] = resumo[0].df
 
         return dados
 
@@ -82,7 +72,7 @@ class ParserClear(ParserNota):
         Args:
             table (PandasDataframe): Dataframe com os dados da nota
         """
-        return float(table[4][3].replace(",","."))
+        return float(table[4][2].replace(",","."))
 
     def parse_emolumentos(self, table):
         """
@@ -91,7 +81,7 @@ class ParserClear(ParserNota):
         Args:
             table (PandasDataframe): Dataframe com os dados da nota
         """        
-        return float(table[4][9].replace(",","."))
+        return float(table[4][8].replace(",","."))
 
     def parse_valor_total_operacoes(self, table):
         """
@@ -100,9 +90,9 @@ class ParserClear(ParserNota):
         Args:
             table (PandasDataframe): Dataframe com os dados da nota
         """        
-        return float(table[2][8].replace(".","").replace(",","."))
+        return float(table[2][7].replace(".","").replace(",","."))
 
-    def parse_transacoes(self, table):
+    def parse_transacoes(self, table, data_pregao:date):
         """
         Processa a tabela e extrai as transacoes
         """        
@@ -137,7 +127,7 @@ class ParserClear(ParserNota):
                     qtd = int(aux[1][6])
                     preco_medio = float(aux[1][7].replace(",","."))                
 
-            nova_trasacao = Transacao(tipo, ativo, qtd, preco_medio)
+            nova_trasacao = Transacao(data_pregao, tipo, ativo, qtd, preco_medio)
             transacoes.append(nova_trasacao)
 
         return transacoes
@@ -155,7 +145,7 @@ class ParserClear(ParserNota):
 
         nota = Nota(data_pregao, taxa_liquidacao, emolumentos, valor_total_operacoes, self.path_pdf)
 
-        transacoes = self.parse_transacoes(tables["transacoes"])
+        transacoes = self.parse_transacoes(tables["transacoes"], data_pregao)
 
         for transacao in transacoes:            
             nota.add_transcao(transacao)

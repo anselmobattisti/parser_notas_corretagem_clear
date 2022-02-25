@@ -1,18 +1,23 @@
 import re
+from datetime import date
+
 
 class Transacao:
 
-    def __init__(self, tipo:str, ativo:str, qtd:int, preco_medio:float, preco_medio_ajustado:float=0):
+
+    def __init__(self, data_pregao:date, tipo:str, ativo:str, qtd:int, preco_medio:float, preco_medio_ajustado:float=0):
         """
         Estrutura da nota de corretagem
 
         Args:
+            data_pregao (date): Data do pregão
             tipo (str): Tipo da operação, (Compra = C / Venda = V)
             ativo (str): Nome do ativo
             qtd (int): Quantidade de unidades transacionadas
             preco_medio (float): Preço médio de cada unidade
             preco_medio_ajustado (float): Preço médio ajustado descontando as taxas
-        """                
+        """
+        self.data_pregao = data_pregao
         self.tipo = tipo
         self.ativo = ativo
         self.qtd = qtd
@@ -23,6 +28,22 @@ class Transacao:
         else:
             self.preco_medio_ajustado = preco_medio
 
+    @property
+    def data_pregao(self):
+        """
+        Data do pregão
+        """
+        return self._data_pregao
+
+    @data_pregao.setter
+    def data_pregao(self, valor: date):
+        """
+        Seta a data do pregão
+        """
+        if not type(valor) == date:
+            raise TypeError("A data do pregão deve ser um date")
+
+        self._data_pregao = valor
 
     @property
     def tipo(self):
