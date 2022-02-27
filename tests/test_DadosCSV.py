@@ -9,7 +9,7 @@ import os
 class NotaTest(unittest.TestCase):
 
     def test_exportarnotas(self):
-        filename = "notas.csv"
+        filename = "arquivos_teste/notas.csv"
 
         notas = []
         notas.append(Nota(date(2021,10,10),0.10,1.15,200,"Arquivo1"))
@@ -22,7 +22,7 @@ class NotaTest(unittest.TestCase):
 
     # @unittest.skip
     def test_exportartransacoes(self):
-        filename = "transacoes.csv"
+        filename = "arquivos_teste/transacoes.csv"
 
         transacoes = []
         transacoes.append(Transacao(date(2021,10,10), "C", "ENERGIAS BR ON NM ", 300, 20.00))
@@ -36,14 +36,14 @@ class NotaTest(unittest.TestCase):
         # os.remove(filename)
 
     def test_importartransacoes(self):
-        filename = "transacoes.csv"
+        filename = "arquivos_teste/transacoes.csv"
         transacoes = DadosCSV.importar_transacoes(filename)
         Imprimir.transacao(transacoes[0])
         self.assertTrue(len(transacoes), 4)
         # os.remove(filename)
 
     def test_importarnotas(self):
-        filename = "notas.csv"
+        filename = "arquivos_teste/notas.csv"
         notas = DadosCSV.importar_notas(filename)
 
         for n in notas:
@@ -53,6 +53,12 @@ class NotaTest(unittest.TestCase):
 
         # os.remove(filename)
 
+    def test_importarativos(self):
+        filename = "arquivos_teste/ativos.csv"
+        ativos = DadosCSV.importar_ativos(filename)
+
+        self.assertTrue(len(ativos), 3)
+        self.assertTrue(ativos[1].nome == "BBDC3")
 
 
 if __name__ == '__main__':

@@ -1,18 +1,11 @@
 from datetime import date
-
 import camelot
-from camelot import utils
-import os
-from os import listdir
-
-from matplotlib.pyplot import table
-from src.Transacao import Transacao
 from src.Parser_Nota import ParserNota
 from src.Nota import Nota
-
-import pandas as pd
+from src.Transacao import Transacao
+from src.Utils import Utils
 import numpy as np
-import re
+
 
 class ParserClear(ParserNota):
 
@@ -92,9 +85,12 @@ class ParserClear(ParserNota):
         """        
         return float(table[2][7].replace(".","").replace(",","."))
 
-    def parse_transacoes(self, table, data_pregao:date):
+    def parse_transacoes(self, table, data_pregao: date, nome_ativos_clear: dict):
         """
         Processa a tabela e extrai as transacoes
+
+        @Args:
+            nome_ativos_clear (dict): Dicionário com os nomes dos ativos na clear
         """        
         transacoes = []        
         
@@ -127,14 +123,25 @@ class ParserClear(ParserNota):
                     qtd = int(aux[1][6])
                     preco_medio = float(aux[1][7].replace(",","."))                
 
-            nova_trasacao = Transacao(data_pregao, tipo, ativo, qtd, preco_medio)
+            ativo = Utils.formata_nome_ativo_clear(ativo)
+            if ativo in nome_ativos_clear:
+                nome_ativo_clear = nome_ativos_clear[ativo]
+            else:
+                print(nome_ativos_clear)
+                print("O ativo {} não está cadastrado na lista com os nomes dos ativos da clear".format(ativo))
+                quit()
+
+            nova_trasacao = Transacao(data_pregao, tipo, ativo, nome_ativo_clear, qtd, preco_medio)
             transacoes.append(nova_trasacao)
 
         return transacoes
     
-    def cria_nota(self):
+    def cria_nota(self, nome_ativos_clear):
         """
         Cria uma nota a partir do arquivo enviado
+
+        Args:
+            nome_ativos_clear (dict): Dicionário com o nome dos ativos utilizados pela clear
         """
         tables = self.extract(self.refactor_path_pdf)
 
@@ -145,7 +152,7 @@ class ParserClear(ParserNota):
 
         nota = Nota(data_pregao, taxa_liquidacao, emolumentos, valor_total_operacoes, self.path_pdf)
 
-        transacoes = self.parse_transacoes(tables["transacoes"], data_pregao)
+        transacoes = self.parse_transacoes(tables["transacoes"], data_pregao, nome_ativos_clear)
 
         for transacao in transacoes:            
             nota.add_transcao(transacao)

@@ -3,12 +3,11 @@ from src.Nota import Nota
 from src.Transacao import Transacao
 from src.Ativo import Ativo
 
-import datetime
 
 class Imprimir:
 
     @staticmethod
-    def nota(nota:Nota):
+    def nota(nota: Nota):
         """
         Imprime os dados de uma nota
 
@@ -37,7 +36,7 @@ class Imprimir:
                     
 
     @staticmethod
-    def transacao(transacao:Transacao):
+    def transacao(transacao: Transacao):
         """
         Imprime uma transação
         Args:
@@ -47,6 +46,7 @@ class Imprimir:
         table.rows.append(["{}/{}/{}".format(transacao.data_pregao.day,transacao.data_pregao.month, transacao.data_pregao.year)])
         table.rows.append([transacao.tipo])
         table.rows.append([transacao.ativo])
+        table.rows.append([transacao.nome_ativo_clear])
         table.rows.append([transacao.qtd])
         table.rows.append([transacao.preco_medio])
         table.rows.append([transacao.preco_medio_ajustado])
@@ -56,6 +56,7 @@ class Imprimir:
             "Data_Pregao",
             "Tipo",
             "Ativo",
+            "Nome_Ativo_Clear",
             "Qtd",
             "Preco_Medio",
             "Preco_Medio_Ajustado",
@@ -67,7 +68,7 @@ class Imprimir:
             
 
     @staticmethod
-    def ativo(ativo:Ativo):
+    def ativo(ativo: Ativo):
         """
         Imprime um ativo
 
@@ -77,6 +78,7 @@ class Imprimir:
         table = BeautifulTable()
         table.rows.append([ativo.tipo])
         table.rows.append([ativo.nome])
+        table.rows.append([ativo.nome_ativo_clear])
         table.rows.append([ativo.qtd])
         table.rows.append([ativo.preco_medio])        
         table.rows.append([ativo.calc_valor_investido()])
@@ -84,10 +86,11 @@ class Imprimir:
         table.rows.header = [
             "Tipo",
             "Ativo",
+            "Nome_Ativo_Clear",
             "Qtd",
             "Preco_Medio",
             "Valor_Investido",            
         ]
         print(table)
-        print("\n")        
-                        
+        print("\n")
+
