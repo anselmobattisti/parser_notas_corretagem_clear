@@ -1,7 +1,5 @@
-*.pdf
-venv/*
-venv
-./venv/*
-./venv/*
-minhas_notas
 *.csv
+*.pdf
+./venv
+./minhas_notas
+./notas
