@@ -81,10 +81,10 @@ class DadosCSV:
                         transacao.ativo,
                         transacao.nome_ativo_clear,
                         transacao.qtd,
-                        transacao.preco_medio,
-                        transacao.preco_medio_ajustado,
-                        transacao.calc_valor_transacao(),
-                        transacao.calc_valor_transacao_ajustada()
+                        round(transacao.preco_medio,2),
+                        round(transacao.preco_medio_ajustado,2),
+                        round(transacao.calc_valor_transacao(),2),
+                        round(transacao.calc_valor_transacao_ajustada(),2)
                     ])
 
         except Exception as e:
@@ -107,18 +107,18 @@ class DadosCSV:
                 spamreader = csv.reader(f, delimiter=",")
                 next(spamreader)
                 for row in spamreader:
-                    print(row)
                     dt = row[0].split("-")
                     data_pregao = date(int(dt[0]), int(dt[1]), int(dt[2]))
                     t = Transacao(
                         data_pregao = data_pregao,
                         tipo = row[1],
-                        ativo=row[2],
-                        nome_ativo_clear=row[3],
+                        ativo=row[3],
+                        nome_ativo_clear=row[2],
                         qtd=int(row[4]),
                         preco_medio=float(row[5]),
                         preco_medio_ajustado=float(row[6])
                     )
+
                     transacaoes.append(t)
 
             return transacaoes
@@ -168,11 +168,12 @@ class DadosCSV:
                 next(spamreader)
                 for row in spamreader:
                     # Ativo,Qtd,Preco_Medio
+                    pm = float(row[3].replace(",","."))
                     ativos.append(Ativo(
                         tipo = row[1],
                         nome = row[0],
                         qtd = int(row[2]),
-                        preco_medio = float(row[3])
+                        preco_medio = pm
                     ))
 
             return ativos
@@ -202,3 +203,46 @@ class DadosCSV:
         except Exception as e:
             print('Erro ao carregar o nome dos ativos:', e)
             return []
+
+    @staticmethod
+    def exportar_posicao_acoes(ativos: List[Ativo], filename: str):
+        """
+        Exportar ativos
+
+        Args:
+            ativos (List[Ativo]): Lista de ativos
+            filename (str): Path do arquivo que será gerado
+        """
+
+        sorted_ativos = sorted(ativos, key=lambda x: x.nome)
+
+        try:
+            if os.path.exists(filename):
+                os.remove(filename)
+
+            with open(filename, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    "Ativo",
+                    "QTD",
+                    "Preco_Medio",
+                    "Descricao"
+                    "Total_Investido"
+                ])
+
+
+
+                for ativo in sorted_ativos:
+
+                    valor_investido = round(ativo.qtd * ativo.preco_medio, 2)
+
+                    writer.writerow([
+                        ativo.nome,
+                        ativo.qtd,
+                        "{}".format(ativo.preco_medio).replace(".",","),
+                        ativo.imprimir_discriminacao(),
+                        "{}".format(valor_investido).replace(".", ","),
+                    ])
+
+        except Exception as e:
+            print('Error:', e)

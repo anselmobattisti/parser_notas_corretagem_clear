@@ -78,7 +78,6 @@ class Imprimir:
         table = BeautifulTable()
         table.rows.append([ativo.tipo])
         table.rows.append([ativo.nome])
-        table.rows.append([ativo.nome_ativo_clear])
         table.rows.append([ativo.qtd])
         table.rows.append([ativo.preco_medio])        
         table.rows.append([ativo.calc_valor_investido()])
@@ -86,7 +85,6 @@ class Imprimir:
         table.rows.header = [
             "Tipo",
             "Ativo",
-            "Nome_Ativo_Clear",
             "Qtd",
             "Preco_Medio",
             "Valor_Investido",            

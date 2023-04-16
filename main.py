@@ -2,14 +2,31 @@ from src.Parser_Clear import ParserClear
 import os
 from src.Dados_CSV import DadosCSV
 from src.Imprimir import Imprimir
+from src.Ativo import Ativo
 
+def carregar_transacoes_manuais(filetransacaoes: str):
+    """
+    Carrega as transações que foram manualmente inseridas devido a emissão de cotas ou então processo de bonificação
+    de ações.
 
-def processar_notas(meses: [], nome_ativos_clear: dict):
+    Dados sobre cada emissão de FII pode ser achada no site: https://www.clubefii.com.br/ofertas-publicas-fundos-imobiliarios/quinta-emissao-XPLG11
+
+    :param filetransacaoes: caminho onde está o arquivo das transações manuais
+    :return:
+    """
+    transacoes = []
+
+    transacoes += DadosCSV.importar_transacoes(filetransacaoes)
+
+    return transacoes
+
+def processar_notas(meses: [], ano:int , nome_ativos_clear: dict):
     """
     Processa as notas em pdf de uma pasta e gera o CSV com as notas e as transações,
     os arquivos CSV serão salvos na mesma pasta onde está o PDF com o nome de notas.csv e transacoes.csv
 
     :param meses: lista com os meses que devem ser processados
+    :param ano: ano do imposto
     :param nome_ativos_clear: dicionário com os nomes de ativos da clear
     :return:
     """
@@ -17,8 +34,7 @@ def processar_notas(meses: [], nome_ativos_clear: dict):
     for mes in meses:
         notas = []
         print("Processando as notas do mês {}:".format(mes))
-        path_notas = "/home/battisti/versionado/nota-corretagem-clear/minhas_notas/{}-2021".format(mes)
-
+        path_notas = "/home/battisti/versionado/parser_notas_corretagem_clear/minhas_notas/{}-{}".format(mes, ano)
         list_files = os.listdir(path_notas)
         list_files = sorted(list_files)
         for f in list_files:
@@ -38,14 +54,15 @@ def processar_notas(meses: [], nome_ativos_clear: dict):
         DadosCSV.exportar_transacoes(transacoes, "{}/transacoes.csv".format(path_notas))
 
 
-def executa_processamento_anual_notas(nome_ativos_clear):
+def executa_processamento_anual_notas(nome_ativos_clear, ano):
     """
     Executa o processamento de todas todos os PDFs das notas que estão nas pastas de cada mes
     :return:
     """
     # meses = ["teste"]
     meses = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
-    processar_notas(meses, nome_ativos_clear)
+    # meses = ["11"]
+    processar_notas(meses, ano, nome_ativos_clear)
 
 
 def carregar_notas(path_csv: str, ano: int, meses: []):
@@ -72,7 +89,7 @@ def carregar_transacaoes(path_csv: str, ano: int, meses: []):
     """
     Carreta os dados das transacoes que foram previamente processadas.
 
-    :param path_notas: caminho onde estão as notas
+    :param path_csv: caminho onde estão as notas
     :param ano: Ano onde as notas foram geradas
     :param meses: arquivos de quais meses devem ser importados
     :return:
@@ -81,10 +98,13 @@ def carregar_transacaoes(path_csv: str, ano: int, meses: []):
 
     for mes in meses:
         path_transacoes_csv = "{}{}-{}/{}".format(path_csv, mes, ano, "transacoes.csv")
-        print("Importando arquivo {}:".format(path_transacoes_csv))
         transacoes += DadosCSV.importar_transacoes(path_transacoes_csv)
 
-    return transacoes
+    # carregar transações manuais
+    transacaoes_manuais = carregar_transacoes_manuais("{}/transacoes_manuais.csv".format(path_csv))
+
+    return transacoes + transacaoes_manuais
+
 
 def carregar_ativos(path_arquvio: str, nome_ativos_clear: dict):
     """
@@ -95,36 +115,51 @@ def carregar_ativos(path_arquvio: str, nome_ativos_clear: dict):
     :return: dicionários com os ativos
     """
     ativos = DadosCSV.importar_ativos(path_arquvio)
+
+    ativos_ja_importados = []
+
+    for ativo in ativos:
+        ativos_ja_importados.append(ativo.nome)
+
+    # Adiciona todos os ativos que foram negociados no ano mas que ainda não estão na lista
+    for ativo in nome_ativos_clear:
+        nome_ativo = nome_ativos_clear[ativo]
+        if nome_ativo not in ativos_ja_importados:
+            ativos_ja_importados.append(ativo)
+            ativos.append(Ativo("ACAO",nome_ativo, 0, 0.0))
+
     return ativos
-    # # gera ativos que não existiam no ano anterior mas que foram comprados esse ano e estão no dicionário
-    # for ativo in nome_ativos_clear.keys():
-    #     novo = False
-    #     print(ativo)
-    #     print(nome_ativos_clear[ativo])
-    #
-    # print(ativos)
-    # quit()
-    # return ativos
+
 
 def main():
-    # carrega o nome dos ativos
-    nome_ativos_clear = DadosCSV.carregar_nome_ativos("minhas_notas/nome_ativos_negociados_clear_2021.csv")
+    ano = 2022
+
+    path_sys = "/home/battisti/versionado/parser_notas_corretagem_clear/"
+
+    path_data = "{}data/".format(path_sys)
+
+    path_csv = "{}minhas_notas/".format(path_sys)
+
+    nome_ativos_clear = DadosCSV.carregar_nome_ativos("{}nome_ativos.csv".format(path_data))
 
     # # Executa o processamento atual das notas
-    executa_processamento_anual_notas(nome_ativos_clear)
-    quit()
+    # executa_processamento_anual_notas(nome_ativos_clear, ano)
+    # quit()
 
     meses = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
-    path_csv = "/home/battisti/versionado/nota-corretagem-clear/minhas_notas/"
+    ativos = carregar_ativos("{}ativos.csv".format(path_data), nome_ativos_clear)
 
-    ativos = carregar_ativos("{}/ativos_teste.csv".format(path_csv), nome_ativos_clear)
+    transacoes = carregar_transacaoes(path_csv, ano, meses)
 
-    transacoes = carregar_transacaoes(path_csv, 2021, meses)
+    DadosCSV.exportar_transacoes(transacoes, "{}{}-transacoes.csv".format(path_csv, ano))
+    # quit()
 
     for ativo in ativos:
         ativo.recalcular_preco_medio(transacoes)
         print(ativo.imprimir_discriminacao())
 
+    posicao_acoes = "{}{}-posicao.csv".format(path_csv,ano)
+    DadosCSV.exportar_posicao_acoes(ativos, posicao_acoes)
     # notas = carregar_notas(path_csv,2021,meses)
     # for nota in notas:
     #     Imprimir.nota(nota)

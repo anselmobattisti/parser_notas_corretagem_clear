@@ -5,6 +5,7 @@ from src.Nota import Nota
 from src.Transacao import Transacao
 from src.Utils import Utils
 import numpy as np
+import os
 
 
 class ParserClear(ParserNota):
@@ -53,8 +54,9 @@ class ParserClear(ParserNota):
 
         Args:
             table (PandasDataframe): Dataframe com os dados da nota
-        """     
-        data_pregao = table[2][2]    
+        """
+        data_pregao = table[1][2].split('\n')
+        data_pregao = data_pregao[2]
         data_pregao_formatada = date(int(data_pregao[6:10]), int(data_pregao[3:5]), int(data_pregao[0:2]))
         return data_pregao_formatada
 
@@ -124,12 +126,11 @@ class ParserClear(ParserNota):
                     preco_medio = float(aux[1][7].replace(",","."))                
 
             ativo = Utils.formata_nome_ativo_clear(ativo)
+            nome_ativo_clear = ativo
             if ativo in nome_ativos_clear:
                 nome_ativo_clear = nome_ativos_clear[ativo]
             else:
-                print(nome_ativos_clear)
                 print("O ativo {} não está cadastrado na lista com os nomes dos ativos da clear".format(ativo))
-                quit()
 
             nova_trasacao = Transacao(data_pregao, tipo, ativo, nome_ativo_clear, qtd, preco_medio)
             transacoes.append(nova_trasacao)
@@ -144,10 +145,10 @@ class ParserClear(ParserNota):
             nome_ativos_clear (dict): Dicionário com o nome dos ativos utilizados pela clear
         """
         tables = self.extract(self.refactor_path_pdf)
-
         data_pregao = self.parse_data_pregao(tables["cabecalho"])
         taxa_liquidacao = self.parse_taxa_liquidacao(tables["resumo"])
         emolumentos = self.parse_emolumentos(tables["resumo"])
+
         valor_total_operacoes = self.parse_valor_total_operacoes(tables["resumo"])
 
         nota = Nota(data_pregao, taxa_liquidacao, emolumentos, valor_total_operacoes, self.path_pdf)

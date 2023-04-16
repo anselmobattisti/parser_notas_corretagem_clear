@@ -1,10 +1,33 @@
-# Notas de Corretagem Clear
+# Parser Notas Corretagem Clear
 
-O objetivo desse script é ler as notas em pdf de uma determinada pasta e gerar um pandas dataframe contendo os dados de todas as transações bem como alguns ajustes importantes, como por exemplo o desconto das taxas de corretagem.
+O objetivo desse projeto é criar um parser para os PDFs das notas da Clear.
 
-Por padrão o sistema procura as notas de corretagem que estão na pasta notas.
+## Notas em PDF
 
-# Instalação
+Antes de executar o script será necessario ter o PDF das notas. Crie uma pasta por mês e salve os PDFs gerados no site 
+da Clear. Minha sugestão é que você crie uma pasta chamada "minhas_notas" e dentro dela crie uma pasta por mes, exemplo:
+
+```
+01-2021
+02-2021
+03-2021
+.
+.
+.
+12-2021
+```
+
+## Arquivos de Configuração
+
+Os arquivos de configuração ficam na pasta "data". 
+
+* **nome_ativos.csv**: Este arquivo contém a relação entre o nome que consta na coluna "Especificação do título" da nota 
+com o "ticker" na B3. Por exemplo, no PDF da nota uma transação do ativo ENBR3 aparecerá com o nome "ENERGIAS BR ON NM",
+sendo assim, os dados desse arquivo são usados para converter o nome na nota para o código da B3.
+
+
+
+## Instalação
 
 Sugiro utilizar um ambiente virtual 
 
@@ -45,5 +68,7 @@ python3 -m unittest tests/test_Nota.py
 
 # Todo
 
-- [ ] Exportar as transações e as notas em Excel
-- [ ] Exportar as notas em CSV
+- [x] Exportar as transações e as notas em Excel
+- [x] Exportar as notas em CSV
+- [ ] Subscrição de FIIS
+- [ ] Bonificação de ações (ITAUSA, Bradesco)

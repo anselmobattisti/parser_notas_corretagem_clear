@@ -79,7 +79,7 @@ class Ativo:
         """
         Preço médio
         """
-        return math.floor(self._preco_medio)
+        return round(self._preco_medio, 2)
 
     @preco_medio.setter
     def preco_medio(self, valor: float):
@@ -101,7 +101,12 @@ class Ativo:
 
         :return:
         """
-        texto = "ACOES: {} QTD: {} PRECO MEDIO COMPRA: R$: {:.2f} \t R$ {:.2f} \t R$ {:.2f}\n".format(self.nome, self.qtd, self.preco_medio, (self.qtd_inicial*self.preco_medio_inicial), self.calc_valor_investido())
+        valor_investido = round(self.qtd * self.preco_medio, 2)
+        preco_medio = "{}".format(self.preco_medio).replace(".", ",")
+        # valor_investido = "{}".format(valor_investido).replace(".", ",")
+
+        # texto = "ACOES: {} QTD: {} PRECO MEDIO COMPRA: R$: {} \t TOTAL\t TOTAL INVESTIDO R$ {} \n".format(self.nome, self.qtd, preco_medio, valor_investido)
+        texto = "ACOES: {} QTD: {} PRECO MEDIO COMPRA: R$: {}".format(self.nome, self.qtd, preco_medio)
         return texto
 
     def recalcular_preco_medio(self, transacoes:List[Transacao]):
@@ -111,27 +116,28 @@ class Ativo:
         Args:
             transacoes (list[Transacao]): Lista de transações para serem processadas            
         """
+        qtd_compra = 0
+        qtd_venda = 0
 
-        # Se não tem quantidade o preço médio é zero
-        if self.qtd == 0:
-            return 0
-        total_investido = self.calc_valor_investido()
-
-        qtd_total_novas_acoes = 0
-
-        valor_total_aplicado_nas_transacaoes = 0
+        total_investido = 0
 
         for transacao in transacoes:
-            if transacao.ativo == self.nome and transacao.tipo == "C":
-                qtd_total_novas_acoes += transacao.qtd
-                valor_total_aplicado_nas_transacaoes += transacao.calc_valor_transacao_ajustada()
+            if transacao.ativo == self.nome:
+                if transacao.tipo == "C":
 
-        # a) Soma o valor_atual com o valor ajustado da nova transacao
-        self.qtd += qtd_total_novas_acoes
+                    total_investido += transacao.calc_valor_transacao_ajustada()
 
-        # b) Divide pela soma do valor atual com a quantidade de ações compradas
-        self.preco_medio = (total_investido + valor_total_aplicado_nas_transacaoes) / self.qtd
+                    qtd_compra += transacao.qtd
 
+                else:
+                    qtd_venda += transacao.qtd
+
+        total = qtd_compra + self.qtd
+        if total == 0:
+            self.preco_medio = 0
+        else:
+            self.preco_medio = ((self.preco_medio * self.qtd) + total_investido) / (total )
+        self.qtd = self.qtd + (qtd_compra - qtd_venda)
         return self.preco_medio
 
 

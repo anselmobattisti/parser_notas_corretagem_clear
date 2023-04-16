@@ -8,7 +8,7 @@ class ParserClearTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.path_pdf = "/home/battisti/versionado/nota-corretagem-clear/notas/teste.pdf"
+        cls.path_pdf = "/home/battisti/versionado/parser_notas_corretagem_clear/notas/teste.pdf"
         cls.parser_clear = ParserClear(cls.path_pdf)
 
     @unittest.skip
